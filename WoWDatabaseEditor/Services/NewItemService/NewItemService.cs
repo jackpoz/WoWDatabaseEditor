@@ -10,6 +10,7 @@ using Prism.Ioc;
 
 namespace WoWDatabaseEditor.Services.NewItemService
 {
+    [WDE.Common.Attributes.AutoRegister]
     public class NewItemService : INewItemService
     {
         private readonly Lazy<INewItemWindowViewModel> viewModel;

@@ -13,6 +13,7 @@ using Prism.Ioc;
 
 namespace WoWDatabaseEditor.Managers
 {
+    [WDE.Common.Attributes.AutoRegister]
     public class WindowManager : BindableBase, IWindowManager
     {
         private readonly IEventAggregator _eventAggregator;

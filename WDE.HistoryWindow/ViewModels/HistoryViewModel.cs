@@ -31,6 +31,11 @@ namespace WDE.HistoryWindow.ViewModels
             set { SetProperty(ref _title, value); }
         }
 
+        ~HistoryViewModel()
+        {
+
+        }
+
         public HistoryViewModel(IEventAggregator eventAggregator)
         {
             eventAggregator.GetEvent<EventActiveDocumentChanged>().Subscribe(doc =>

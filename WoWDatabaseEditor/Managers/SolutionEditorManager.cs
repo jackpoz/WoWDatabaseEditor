@@ -12,6 +12,7 @@ using Prism.Ioc;
 
 namespace WoWDatabaseEditor.Managers
 {
+    [WDE.Common.Attributes.AutoRegister]
     public class SolutionEditorManager : ISolutionEditorManager, IWindowProvider
     {
         private Dictionary<Type, Func<object, DocumentEditor>> _editors;

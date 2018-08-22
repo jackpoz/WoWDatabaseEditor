@@ -11,6 +11,7 @@ using Prism.Ioc;
 
 namespace WDE.SmartScriptEditor.Data
 {
+    [Common.Attributes.AutoRegister]
     public class SmartFactory : ISmartFactory
     {
         private readonly IParameterFactory _parameterFactory;

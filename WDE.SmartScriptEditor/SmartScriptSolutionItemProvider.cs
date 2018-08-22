@@ -24,12 +24,12 @@ namespace WDE.SmartScriptEditor
         private readonly ImageSource _icon;
         private readonly SmartScriptType _type;
         
-        protected readonly IEventAggregator eventAggregator;
-        protected readonly ISmartFactory smartFactory;
-        protected readonly IDatabaseProvider database;
-        protected readonly ISpellStore spellStore;
+        protected readonly Lazy<IEventAggregator> eventAggregator;
+        protected readonly Lazy<ISmartFactory> smartFactory;
+        protected readonly Lazy<IDatabaseProvider> database;
+        protected readonly Lazy<ISpellStore> spellStore;
 
-        protected SmartScriptSolutionItemProvider(string name, string desc, string icon, SmartScriptType type, IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore)
+        protected SmartScriptSolutionItemProvider(string name, string desc, string icon, SmartScriptType type, Lazy<IEventAggregator> eventAggregator, Lazy<ISmartFactory> smartFactory, Lazy<IDatabaseProvider> database, Lazy<ISpellStore> spellStore)
         {
             _name = name;
             _desc = desc;
@@ -66,33 +66,11 @@ namespace WDE.SmartScriptEditor
         //}
     }
 
-    public abstract class B : ISolutionItemProvider
-    {
-        public abstract ISolutionItem CreateSolutionItem();
-        public abstract string GetDescription();
-        public abstract ImageSource GetImage();
-        public abstract string GetName();
-    }
-
-    public class AAAA : SmartScriptSolutionItemProvider
-    {
-        public AAAA(IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore) : base("as", "bd", null, SmartScriptType.Aura, eventAggregator, smartFactory, database, spellStore)
-        {
-        }
-
-        public override ISolutionItem CreateSolutionItem()
-        {
-            return null;
-        }
-    }
-
-
-
     public class SmartScriptCreatureProvider : SmartScriptSolutionItemProvider
     {
-        private readonly ICreatureEntryProviderService creatureEntryProvider;
+        private readonly Lazy<ICreatureEntryProviderService> creatureEntryProvider;
 
-        public SmartScriptCreatureProvider(ICreatureEntryProviderService creatureEntryProvider, IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore)
+        public SmartScriptCreatureProvider(Lazy<ICreatureEntryProviderService> creatureEntryProvider, Lazy<IEventAggregator> eventAggregator, Lazy<ISmartFactory> smartFactory, Lazy<IDatabaseProvider> database, Lazy<ISpellStore> spellStore)
             : base("Creature Script", "Script any npc in game.", "SmartScriptCreatureIcon", SmartScriptType.Creature, eventAggregator, smartFactory, database, spellStore)
         {
             this.creatureEntryProvider = creatureEntryProvider;
@@ -100,18 +78,18 @@ namespace WDE.SmartScriptEditor
 
         public override ISolutionItem CreateSolutionItem()
         {
-            uint? entry = creatureEntryProvider.GetEntryFromService();
+            uint? entry = creatureEntryProvider.Value.GetEntryFromService();
             if (!entry.HasValue)
                 return null;
-            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Creature, eventAggregator, smartFactory, database, spellStore);
+            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Creature, eventAggregator.Value, smartFactory.Value, database.Value, spellStore.Value);
         }
     }
 
     public class SmartScriptGameobjectProvider : SmartScriptSolutionItemProvider
     {
-        private readonly IGameobjectEntryProviderService goProvider;
+        private readonly Lazy<IGameobjectEntryProviderService> goProvider;
 
-        public SmartScriptGameobjectProvider(IGameobjectEntryProviderService goProvider, IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore)
+        public SmartScriptGameobjectProvider(Lazy<IGameobjectEntryProviderService> goProvider, Lazy<IEventAggregator> eventAggregator, Lazy<ISmartFactory> smartFactory, Lazy<IDatabaseProvider> database, Lazy<ISpellStore> spellStore)
             : base("Gameobject Script", "Create script for object, including transports.", "SmartScriptGameobjectIcon", SmartScriptType.GameObject, eventAggregator, smartFactory, database, spellStore)
         {
             this.goProvider = goProvider;
@@ -119,18 +97,18 @@ namespace WDE.SmartScriptEditor
 
         public override ISolutionItem CreateSolutionItem()
         {
-            uint? entry = goProvider.GetEntryFromService();
+            uint? entry = goProvider.Value.GetEntryFromService();
             if (!entry.HasValue)
                 return null;
-            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.GameObject, eventAggregator, smartFactory, database, spellStore);
+            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.GameObject, eventAggregator.Value, smartFactory.Value, database.Value, spellStore.Value);
         }
     }
 
     public class SmartScriptQuestProvider : SmartScriptSolutionItemProvider
     {
-        private readonly IQuestEntryProviderService service;
+        private readonly Lazy<IQuestEntryProviderService> service;
 
-        public SmartScriptQuestProvider(IQuestEntryProviderService service, IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore)
+        public SmartScriptQuestProvider(Lazy<IQuestEntryProviderService> service, Lazy<IEventAggregator> eventAggregator, Lazy<ISmartFactory> smartFactory, Lazy<IDatabaseProvider> database, Lazy<ISpellStore> spellStore)
             : base("Quest Script", "Write a script for quest: on accept, on reward.", "SmartScriptQuestIcon", SmartScriptType.Quest, eventAggregator, smartFactory, database, spellStore)
         {
             this.service = service;
@@ -138,18 +116,18 @@ namespace WDE.SmartScriptEditor
 
         public override ISolutionItem CreateSolutionItem()
         {
-            uint? entry = service.GetEntryFromService();
+            uint? entry = service.Value.GetEntryFromService();
             if (!entry.HasValue)
                 return null;
-            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Quest, eventAggregator, smartFactory, database, spellStore);
+            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Quest, eventAggregator.Value, smartFactory.Value, database.Value, spellStore.Value);
         }
     }
 
     public class SmartScriptAuraProvider : SmartScriptSolutionItemProvider
     {
-        private readonly ISpellEntryProviderService service;
+        private readonly Lazy<ISpellEntryProviderService> service;
 
-        public SmartScriptAuraProvider(ISpellEntryProviderService service, IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore)
+        public SmartScriptAuraProvider(Lazy<ISpellEntryProviderService> service, Lazy<IEventAggregator> eventAggregator, Lazy<ISmartFactory> smartFactory, Lazy<IDatabaseProvider> database, Lazy<ISpellStore> spellStore)
             : base("Aura Script", "Auras can have scripted several events: on apply, on remove, on periodic tick.", "SmartScriptAuraIcon", SmartScriptType.Aura, eventAggregator, smartFactory, database, spellStore)
         {
             this.service = service;
@@ -157,18 +135,18 @@ namespace WDE.SmartScriptEditor
 
         public override ISolutionItem CreateSolutionItem()
         {
-            uint? entry = service.GetEntryFromService();
+            uint? entry = service.Value.GetEntryFromService();
             if (!entry.HasValue)
                 return null;
-            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Spell, eventAggregator, smartFactory, database, spellStore);
+            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Spell, eventAggregator.Value, smartFactory.Value, database.Value, spellStore.Value);
         }
     }
 
     public class SmartScriptSpellProvider : SmartScriptSolutionItemProvider
     {
-        private readonly ISpellEntryProviderService service;
+        private readonly Lazy<ISpellEntryProviderService> service;
 
-        public SmartScriptSpellProvider(ISpellEntryProviderService service, IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore)
+        public SmartScriptSpellProvider(Lazy<ISpellEntryProviderService> service, Lazy<IEventAggregator> eventAggregator, Lazy<ISmartFactory> smartFactory, Lazy<IDatabaseProvider> database, Lazy<ISpellStore> spellStore)
             : base("Spell Script", "Create a new script for spell: this includes script for any existing effect in spell.", "SmartScriptSpellIcon", SmartScriptType.Spell, eventAggregator, smartFactory, database, spellStore)
         {
             this.service = service;
@@ -176,23 +154,23 @@ namespace WDE.SmartScriptEditor
 
         public override ISolutionItem CreateSolutionItem()
         {
-            uint? entry = service.GetEntryFromService();
+            uint? entry = service.Value.GetEntryFromService();
             if (!entry.HasValue)
                 return null;
-            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Spell, eventAggregator, smartFactory, database, spellStore);
+            return new SmartScriptSolutionItem((int)entry.Value, SmartScriptType.Spell, eventAggregator.Value, smartFactory.Value, database.Value, spellStore.Value);
         }
     }
 
     public class SmartScriptTimedActionListProvider : SmartScriptSolutionItemProvider
     {
-        public SmartScriptTimedActionListProvider(IEventAggregator eventAggregator, ISmartFactory smartFactory, IDatabaseProvider database, ISpellStore spellStore)
+        public SmartScriptTimedActionListProvider(Lazy<IEventAggregator> eventAggregator, Lazy<ISmartFactory> smartFactory, Lazy<IDatabaseProvider> database, Lazy<ISpellStore> spellStore)
             : base("Timed action list", "Timed action list contains list of actions played in time, this can be used to create RP events, cameras, etc.", "SmartScriptTimedActionListIcon", SmartScriptType.Timed, eventAggregator, smartFactory, database, spellStore)
         {
         }
 
         public override ISolutionItem CreateSolutionItem()
         {
-            return new SmartScriptSolutionItem(0, SmartScriptType.AreaTrigger, eventAggregator, smartFactory, database, spellStore);
+            return new SmartScriptSolutionItem(0, SmartScriptType.AreaTrigger, eventAggregator.Value, smartFactory.Value, database.Value, spellStore.Value);
         }
     }
 }

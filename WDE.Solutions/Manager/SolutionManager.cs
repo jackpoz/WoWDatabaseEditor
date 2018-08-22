@@ -12,9 +12,11 @@ using WDE.Common;
 using Prism.Ioc;
 using Prism.Events;
 using WDE.Common.Events;
+using WDE.Common.Attributes;
 
 namespace WDE.Solutions.Manager
 {
+    [AutoRegister]
     public class SolutionManager : ISolutionManager
     {
         private ObservableCollection<ISolutionItem> _items;
@@ -24,7 +26,7 @@ namespace WDE.Solutions.Manager
         {
             _items = new ObservableCollection<ISolutionItem>();
 
-            eventAggregator.GetEvent<AllModulesLoaded>().Subscribe(() => Initialize());
+            Initialize();
 
             _items.CollectionChanged += ItemsOnCollectionChanged;
         }

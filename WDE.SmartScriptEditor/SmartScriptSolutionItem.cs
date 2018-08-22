@@ -46,6 +46,7 @@ namespace WDE.SmartScriptEditor
         {
             get
             {
+                return SmartType.ToString() + " " + Entry.ToString();
                 if (Entry > 0)
                 {
                     switch (SmartType)

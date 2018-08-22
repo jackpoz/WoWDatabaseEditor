@@ -44,9 +44,9 @@ namespace WDE.MySqlDatabase
                 }
                 var temp = GetCreatureTemplates();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Console.WriteLine("Cannot connect to MySql database. Check your settings.");
+                MessageBox.Show($"Cannot connect to MySql database: {e.Message} Check your settings.");
                 model = null;
             }
         }

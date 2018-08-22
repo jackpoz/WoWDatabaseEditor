@@ -10,8 +10,10 @@ using Prism.Events;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Unity;
+using Unity.Lifetime;
 using Unity.RegistrationByConvention;
 using WDE.Common;
+using WDE.Common.Attributes;
 using WDE.Common.Managers;
 using WDE.Common.Services;
 using WDE.Common.Windows;
@@ -39,35 +41,26 @@ namespace WoWDatabaseEditor
     {
         protected override Window CreateShell()
         {
-            //Container.GetContainer().RegisterType<IEventAggregator, EventAggregator>(new ContainerControlledLifetimeManager());
-            //Container.GetContainer().RegisterType<IWindowManager, WindowManager>(new ContainerControlledLifetimeManager());
-            //Container.GetContainer().RegisterType<ISolutionEditorManager, SolutionEditorManager>(new ContainerControlledLifetimeManager());
-            //Container.GetContainer().RegisterType<IWindowProvider, SolutionEditorManager>("SolutionExplorer");
-           // Container.GetContainer().RegisterTypes(AllClasses.FromAssemblies(typeof(HistoryModule).Assembly), (c) => WithMappings.FromMatchingInterface(c)); ;
-
-            return Container.Resolve<MainWindow>();
+            return Container.Resolve<SplashScreenView>();
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
             containerRegistry.RegisterSingleton<IWindowManager, WindowManager>();
             containerRegistry.RegisterSingleton<ISolutionEditorManager, SolutionEditorManager>();
             containerRegistry.Register<IWindowProvider, SolutionEditorManager>("SolutionExplorer");
+        }
 
-            containerRegistry.Register<IConfigureService, ConfigureService>();
-            containerRegistry.Register<INewItemService, NewItemService>();
-            containerRegistry.Register<INewItemWindowViewModel, NewItemWindowViewModel>();
-            containerRegistry.Register<ISolutionManager, SolutionManager>();
-
-            
-
+        protected override void RegisterRequiredTypes(IContainerRegistry containerRegistry)
+        {
+            base.RegisterRequiredTypes(containerRegistry);
+            containerRegistry.RegisterSingleton<IEventAggregator, EventAggregator>();
         }
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
             base.ConfigureModuleCatalog(moduleCatalog);
-            //moduleCatalog.AddModule(typeof(HistoryModule));
+
             moduleCatalog.AddModule(typeof(MySqlDatabaseModule));
 
             moduleCatalog.AddModule(typeof(HistoryModule));
@@ -79,20 +72,24 @@ namespace WoWDatabaseEditor
 
             moduleCatalog.AddModule(typeof(HistoryWindowModule));
 
-            var eventAggregator = Container.Resolve<IEventAggregator>();
-            eventAggregator.GetEvent<AllModulesLoaded>().Publish();
+            Container.GetContainer().RegisterTypes(AllClasses.FromLoadedAssemblies().Where(t => t.IsDefined(typeof(AutoRegisterAttribute), true)), WithMappings.FromMatchingInterface, WithName.Default, t => new ContainerControlledLifetimeManager());
+
         }
         protected override IModuleCatalog CreateModuleCatalog()
         {
             return new ConfigurationModuleCatalog();
         }
 
-        //protected override void OnStartup(StartupEventArgs e)
-        //{
-        //    base.OnStartup(e);
+        protected override void OnInitialized()
+        {
+            // have no idea if it makes sense, but works
+            var mainWindow = Container.Resolve<MainWindow>();
 
-        //    var bootstrapper = new Bootstrapper();
-        //    bootstrapper.Run();
-        //}
+            var eventAggregator = Container.Resolve<IEventAggregator>();
+            eventAggregator.GetEvent<AllModulesLoaded>().Publish();
+
+            mainWindow.ShowDialog();
+            Current.Shutdown();
+        }
     }
 }

@@ -11,21 +11,23 @@ using WDE.Common.Windows;
 using WDE.HistoryWindow.ViewModels;
 using WDE.HistoryWindow.Views;
 using Prism.Ioc;
+using Prism.Events;
 
 namespace WDE.HistoryWindow
 {
     public class HistoryWindowModule : IModule, IWindowProvider
     {
-        private HistoryViewModel viewModel;
+        private IEventAggregator eventAggregator;
 
-        public HistoryWindowModule()
+        public HistoryWindowModule(IEventAggregator eventAggregator)
         {
+            this.eventAggregator = eventAggregator;
         }
         
         public ContentControl GetView()
         {
             var view = new HistoryView();
-            view.DataContext = viewModel;
+            view.DataContext = new HistoryViewModel(eventAggregator);
             return view;
         }
 
@@ -36,7 +38,6 @@ namespace WDE.HistoryWindow
 
         public void OnInitialized(IContainerProvider containerProvider)
         {
-            viewModel = containerProvider.Resolve<HistoryViewModel>();
         }
 
         public bool AllowMultiple => false;

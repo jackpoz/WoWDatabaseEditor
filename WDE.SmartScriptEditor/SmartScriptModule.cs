@@ -50,7 +50,6 @@ namespace WDE.SmartScriptEditor
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            
             containerRegistry.Register<ISolutionItemProvider, SmartScriptCreatureProvider>("Creature Script");
             containerRegistry.Register<ISolutionItemProvider, SmartScriptGameobjectProvider>("Gameobject Script");
             containerRegistry.Register<ISolutionItemProvider, SmartScriptQuestProvider>("Quest Script");
