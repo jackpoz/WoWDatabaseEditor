@@ -38,13 +38,13 @@ namespace WDE.MySqlDatabase
                 {
                     model.Create(DatabaseCreationOptions.IfDatabaseNotExist);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // already exists, its ok
                 }
                 var temp = GetCreatureTemplates();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Console.WriteLine("Cannot connect to MySql database. Check your settings.");
                 model = null;

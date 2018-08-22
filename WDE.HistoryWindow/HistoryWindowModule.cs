@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Unity;
+﻿
 using Prism.Modularity;
 using System;
 using System.Collections.Generic;
@@ -10,28 +10,33 @@ using WDE.Common;
 using WDE.Common.Windows;
 using WDE.HistoryWindow.ViewModels;
 using WDE.HistoryWindow.Views;
+using Prism.Ioc;
 
 namespace WDE.HistoryWindow
 {
     public class HistoryWindowModule : IModule, IWindowProvider
     {
-        private readonly IUnityContainer _container;
+        private HistoryViewModel viewModel;
 
-        public HistoryWindowModule(IUnityContainer _container)
+        public HistoryWindowModule()
         {
-            this._container = _container;
         }
         
-        public void Initialize()
-        {
-            _container.RegisterType<IWindowProvider, HistoryWindowModule>("HistoryWindow");
-        }
-
         public ContentControl GetView()
         {
             var view = new HistoryView();
-            view.DataContext = _container.Resolve<HistoryViewModel>();
+            view.DataContext = viewModel;
             return view;
+        }
+
+        public void RegisterTypes(IContainerRegistry containerRegistry)
+        {
+            containerRegistry.Register<IWindowProvider, HistoryWindowModule>("HistoryWindow");
+        }
+
+        public void OnInitialized(IContainerProvider containerProvider)
+        {
+            viewModel = containerProvider.Resolve<HistoryViewModel>();
         }
 
         public bool AllowMultiple => false;
