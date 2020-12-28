@@ -235,8 +235,8 @@
     <PackageReference Include="Unity.RegistrationByConvention">
       <Version>2.1.5</Version>
     </PackageReference>
-    <Reference Include="ParallelExtensionsExtras>
-      <Version=1.2.0.0</Version>
+    <PackageReference Include="ParallelExtensionsExtras">
+      <Version>1.2.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
