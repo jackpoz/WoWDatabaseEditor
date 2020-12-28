@@ -27,12 +27,10 @@ namespace WDE.Parameters
 
         public override void OnInitialized(IContainerProvider containerProvider)
         {
-            new ParameterLoader(containerProvider.Resolve<IDatabaseProvider>()).Load(containerProvider.Resolve<ParameterFactory>());
-            /*containerProvider.Resolve<AllModulesLoaded>().Subscribe(() =>
+            containerProvider.Resolve<AllModulesLoaded>().Subscribe(() =>
             {
-                Console.WriteLine("DEBUG 2");
                 new ParameterLoader(containerProvider.Resolve<IDatabaseProvider>()).Load(containerProvider.Resolve<ParameterFactory>());
-            });*/
+            });
         }
     }
 }
